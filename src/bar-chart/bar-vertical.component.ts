@@ -63,6 +63,8 @@ import { BaseChartComponent } from '../common/base-chart.component';
           [activeEntries]="activeEntries"
           [roundEdges]="roundEdges"
           [animations]="animations"
+          [showVerticalCustomLines]="showVerticalCustomLines" 
+          [verticalCustomLines]="verticalCustomLines"
           (activate)="onActivate($event)"
           (deactivate)="onDeactivate($event)"
           (select)="onClick($event)"
@@ -102,6 +104,9 @@ export class BarVerticalComponent extends BaseChartComponent {
   @Input() yScaleMin: number;
   @Input() showDataLabel: boolean = false;
   @Input() dataLabelFormatting: any;
+
+  @Input() showVerticalCustomLines = false;
+  @Input() verticalCustomLines: {[key: string]: string} = {};
 
   @Output() activate: EventEmitter<any> = new EventEmitter();
   @Output() deactivate: EventEmitter<any> = new EventEmitter();

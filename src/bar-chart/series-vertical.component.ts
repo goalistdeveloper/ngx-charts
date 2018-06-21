@@ -23,45 +23,55 @@ export enum D0Types {
 @Component({
   selector: 'g[ngx-charts-series-vertical]',
   template: `
-    <svg:g ngx-charts-bar
-      *ngFor="let bar of bars; trackBy: trackBy"
-      [@animationState]="'active'"
-      [@.disabled]="!animations"
-      [width]="bar.width"
-      [height]="bar.height"
-      [x]="bar.x"
-      [y]="bar.y"
-      [fill]="bar.color"
-      [stops]="bar.gradientStops"
-      [data]="bar.data"
-      [orientation]="'vertical'"
-      [roundEdges]="bar.roundEdges"
-      [gradient]="gradient"
-      [isActive]="isActive(bar.data)"
-      (select)="onClick($event)"
-      (activate)="activate.emit($event)"
-      (deactivate)="deactivate.emit($event)"
-      ngx-tooltip
-      [tooltipDisabled]="tooltipDisabled"
-      [tooltipPlacement]="tooltipPlacement"
-      [tooltipType]="tooltipType"
-      [tooltipTitle]="tooltipTemplate ? undefined : bar.tooltipText"
-      [tooltipTemplate]="tooltipTemplate"
-      [tooltipContext]="bar.data"
-      [animations]="animations">
-    </svg:g>
-    <svg:g *ngIf="showDataLabel">
-      <svg:g ngx-charts-bar-label *ngFor="let b of barsForDataLabels; let i = index; trackBy:trackDataLabelBy"         
-        [barX]="b.x"
-        [barY]="b.y"
-        [barWidth]="b.width"
-        [barHeight]="b.height"
-        [value]="b.total"
-        [valueFormatting]="dataLabelFormatting"
-        [orientation]="'vertical'"
-        (dimensionsChanged)="dataLabelHeightChanged.emit({size:$event, index:i})"
-      />
-    </svg:g> 
+      <svg:g ngx-charts-bar
+             *ngFor="let bar of bars; trackBy: trackBy"
+             [@animationState]="'active'"
+             [@.disabled]="!animations"
+             [width]="bar.width"
+             [height]="bar.height"
+             [x]="bar.x"
+             [y]="bar.y"
+             [fill]="bar.color"
+             [stops]="bar.gradientStops"
+             [data]="bar.data"
+             [orientation]="'vertical'"
+             [roundEdges]="bar.roundEdges"
+             [gradient]="gradient"
+             [isActive]="isActive(bar.data)"
+             (select)="onClick($event)"
+             (activate)="activate.emit($event)"
+             (deactivate)="deactivate.emit($event)"
+             ngx-tooltip
+             [tooltipDisabled]="tooltipDisabled"
+             [tooltipPlacement]="tooltipPlacement"
+             [tooltipType]="tooltipType"
+             [tooltipTitle]="tooltipTemplate ? undefined : bar.tooltipText"
+             [tooltipTemplate]="tooltipTemplate"
+             [tooltipContext]="bar.data"
+             [animations]="animations">
+      </svg:g>
+      <svg:g *ngIf="showDataLabel">
+          <svg:g ngx-charts-bar-label *ngFor="let b of barsForDataLabels; let i = index; trackBy:trackDataLabelBy"
+                 [barX]="b.x"
+                 [barY]="b.y"
+                 [barWidth]="b.width"
+                 [barHeight]="b.height"
+                 [value]="b.total"
+                 [valueFormatting]="dataLabelFormatting"
+                 [orientation]="'vertical'"
+                 (dimensionsChanged)="dataLabelHeightChanged.emit({size:$event, index:i})"
+          />
+      </svg:g>
+      <svg:g *ngFor="let vLine of verticalCustomLinesDrawList"
+             [attr.transform]="transformForVerticalCustomLine(vLine)">
+          <svg:g *ngIf="showVerticalCustomLines"
+                 [attr.transform]="verticalCustomLineStartPointTransform()">
+              <svg:line
+                      class="gridline-path gridline-path-vertical bar-v-line"
+                      [attr.y1]="dims.height + 30"
+                      y2="0"/>
+          </svg:g>
+      </svg:g>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
@@ -107,8 +117,25 @@ export class SeriesVerticalComponent implements OnChanges {
   barsForDataLabels: Array<{x: number, y: number, width: number, height: number, 
                             total: number, series: string}> = [];
 
+  @Input() showVerticalCustomLines = false;
+  @Input() verticalCustomLines: {[key: string]: string} = {};
+
+  private verticalCustomLinesDrawList: Array<{ x: any, caption: string, bar: any}> = [];
+
   ngOnChanges(changes): void {
     this.update();
+
+    if (this.showVerticalCustomLines) {
+      this.verticalCustomLinesDrawList = [];
+
+      for (const bar of this.bars) {
+        if (this.verticalCustomLines.hasOwnProperty(bar.data.name)) {
+          const caption: string = this.verticalCustomLines[bar.data.name];
+          // this.verticalCustomLinesDrawList.push({x: bar.data.name, caption: caption, bar: bar});
+          this.verticalCustomLinesDrawList.push({x: bar.data.name, caption, bar}); // shorthand
+        }
+      }
+    }
   }
 
   update(): void {
@@ -275,6 +302,19 @@ export class SeriesVerticalComponent implements OnChanges {
 
   trackDataLabelBy(index, barLabel) {       
     return index + '#' + barLabel.series + '#' + barLabel.total;
+  }
+
+  gridLineTransform(): string {
+      const verticalSpacing = 20; // TODO
+      return `translate(0,${-verticalSpacing - 5})`;
+  }
+
+  transformForVerticalCustomLine(vLine: { x: any, caption: string, bar: any}) {
+      return 'translate(' + (vLine.bar.x + vLine.bar.width / 2) + ',' + '0)';
+  }
+
+  verticalCustomLineStartPointTransform(): string {
+      return `translate(0,${20})`;
   }
 
 }

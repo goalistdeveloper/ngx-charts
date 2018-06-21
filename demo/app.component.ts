@@ -1,6 +1,6 @@
 declare var APP_VERSION: string;
 
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import { Location, LocationStrategy, HashLocationStrategy } from '@angular/common';
 import * as shape from 'd3-shape';
 import * as d3 from 'd3';
@@ -224,6 +224,13 @@ export class AppComponent implements OnInit {
     { value: 37750, name: 'Average' },
     { value: 33000, name: 'Minimum' }
   ];
+
+  showVerticalCustomLines = true;
+  verticalCustomLines: {[key: string]: string} = {
+      Germany: 'first',
+      France: 'second',
+      Italy: 'third'
+  };
 
   constructor(public location: Location) {
     this.mathFunction = this.getFunction();
