@@ -26,6 +26,8 @@ var SeriesVerticalComponent = /** @class */ (function () {
         this.deactivate = new EventEmitter();
         this.dataLabelHeightChanged = new EventEmitter();
         this.barsForDataLabels = [];
+        this.showVerticalCustomLines = false;
+        this.verticalCustomLines = [];
     }
     SeriesVerticalComponent.prototype.ngOnChanges = function (changes) {
         this.update();
@@ -182,6 +184,21 @@ var SeriesVerticalComponent = /** @class */ (function () {
     SeriesVerticalComponent.prototype.trackDataLabelBy = function (index, barLabel) {
         return index + '#' + barLabel.series + '#' + barLabel.total;
     };
+    SeriesVerticalComponent.prototype.gridLineTransform = function () {
+        var verticalSpacing = 20; // TODO
+        return "translate(0," + (-verticalSpacing - 5) + ")";
+    };
+    SeriesVerticalComponent.prototype.transformForVerticalCustomLine = function (vLine) {
+        var end = 0;
+        if (this.bars !== undefined && this.bars !== null && this.bars.length > 0) {
+            var lastBar = this.bars[this.bars.length - 1];
+            end = lastBar.x + lastBar.width;
+        }
+        return 'translate(' + (end * vLine.pos / 100) + ',' + '0)';
+    };
+    SeriesVerticalComponent.prototype.verticalCustomLineStartPointTransform = function (sy) {
+        return "translate(0," + sy + ")";
+    };
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -258,10 +275,18 @@ var SeriesVerticalComponent = /** @class */ (function () {
         Output(),
         __metadata("design:type", Object)
     ], SeriesVerticalComponent.prototype, "dataLabelHeightChanged", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], SeriesVerticalComponent.prototype, "showVerticalCustomLines", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Array)
+    ], SeriesVerticalComponent.prototype, "verticalCustomLines", void 0);
     SeriesVerticalComponent = __decorate([
         Component({
             selector: 'g[ngx-charts-series-vertical]',
-            template: "\n    <svg:g ngx-charts-bar\n      *ngFor=\"let bar of bars; trackBy: trackBy\"\n      [@animationState]=\"'active'\"\n      [@.disabled]=\"!animations\"\n      [width]=\"bar.width\"\n      [height]=\"bar.height\"\n      [x]=\"bar.x\"\n      [y]=\"bar.y\"\n      [fill]=\"bar.color\"\n      [stops]=\"bar.gradientStops\"\n      [data]=\"bar.data\"\n      [orientation]=\"'vertical'\"\n      [roundEdges]=\"bar.roundEdges\"\n      [gradient]=\"gradient\"\n      [isActive]=\"isActive(bar.data)\"\n      (select)=\"onClick($event)\"\n      (activate)=\"activate.emit($event)\"\n      (deactivate)=\"deactivate.emit($event)\"\n      ngx-tooltip\n      [tooltipDisabled]=\"tooltipDisabled\"\n      [tooltipPlacement]=\"tooltipPlacement\"\n      [tooltipType]=\"tooltipType\"\n      [tooltipTitle]=\"tooltipTemplate ? undefined : bar.tooltipText\"\n      [tooltipTemplate]=\"tooltipTemplate\"\n      [tooltipContext]=\"bar.data\"\n      [animations]=\"animations\">\n    </svg:g>\n    <svg:g *ngIf=\"showDataLabel\">\n      <svg:g ngx-charts-bar-label *ngFor=\"let b of barsForDataLabels; let i = index; trackBy:trackDataLabelBy\"         \n        [barX]=\"b.x\"\n        [barY]=\"b.y\"\n        [barWidth]=\"b.width\"\n        [barHeight]=\"b.height\"\n        [value]=\"b.total\"\n        [valueFormatting]=\"dataLabelFormatting\"\n        [orientation]=\"'vertical'\"\n        (dimensionsChanged)=\"dataLabelHeightChanged.emit({size:$event, index:i})\"\n      />\n    </svg:g> \n  ",
+            template: "\n      <svg:g ngx-charts-bar\n             *ngFor=\"let bar of bars; trackBy: trackBy\"\n             [@animationState]=\"'active'\"\n             [@.disabled]=\"!animations\"\n             [width]=\"bar.width\"\n             [height]=\"bar.height\"\n             [x]=\"bar.x\"\n             [y]=\"bar.y\"\n             [fill]=\"bar.color\"\n             [stops]=\"bar.gradientStops\"\n             [data]=\"bar.data\"\n             [orientation]=\"'vertical'\"\n             [roundEdges]=\"bar.roundEdges\"\n             [gradient]=\"gradient\"\n             [isActive]=\"isActive(bar.data)\"\n             (select)=\"onClick($event)\"\n             (activate)=\"activate.emit($event)\"\n             (deactivate)=\"deactivate.emit($event)\"\n             ngx-tooltip\n             [tooltipDisabled]=\"tooltipDisabled\"\n             [tooltipPlacement]=\"tooltipPlacement\"\n             [tooltipType]=\"tooltipType\"\n             [tooltipTitle]=\"tooltipTemplate ? undefined : bar.tooltipText\"\n             [tooltipTemplate]=\"tooltipTemplate\"\n             [tooltipContext]=\"bar.data\"\n             [animations]=\"animations\">\n      </svg:g>\n      <svg:g *ngIf=\"showDataLabel\">\n          <svg:g ngx-charts-bar-label *ngFor=\"let b of barsForDataLabels; let i = index; trackBy:trackDataLabelBy\"\n                 [barX]=\"b.x\"\n                 [barY]=\"b.y\"\n                 [barWidth]=\"b.width\"\n                 [barHeight]=\"b.height\"\n                 [value]=\"b.total\"\n                 [valueFormatting]=\"dataLabelFormatting\"\n                 [orientation]=\"'vertical'\"\n                 (dimensionsChanged)=\"dataLabelHeightChanged.emit({size:$event, index:i})\"\n          />\n      </svg:g>\n      <svg:g *ngFor=\"let vLine of verticalCustomLines\"\n             [attr.transform]=\"transformForVerticalCustomLine(vLine)\">\n          <svg:g *ngIf=\"showVerticalCustomLines\"\n                 [attr.transform]=\"verticalCustomLineStartPointTransform(-dims.height * 0.2)\">\n              <svg:line\n                      class=\"gridline-path gridline-path-vertical bar-v-line\"\n                      [attr.y1]=\"dims.height + ((dims.height * 0.2) * 2)\"\n                      y2=\"0\"/>\n          </svg:g>\n      </svg:g>\n  ",
             changeDetection: ChangeDetectionStrategy.OnPush,
             animations: [
                 trigger('animationState', [

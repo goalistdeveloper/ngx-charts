@@ -27,6 +27,11 @@ export declare class BarVerticalComponent extends BaseChartComponent {
     yScaleMin: number;
     showDataLabel: boolean;
     dataLabelFormatting: any;
+    showVerticalCustomLines: boolean;
+    verticalCustomLines: Array<{
+        caption: string;
+        pos: number;
+    }>;
     activate: EventEmitter<any>;
     deactivate: EventEmitter<any>;
     tooltipTemplate: TemplateRef<any>;

@@ -36,6 +36,11 @@ export declare class SeriesVerticalComponent implements OnChanges {
         total: number;
         series: string;
     }>;
+    showVerticalCustomLines: boolean;
+    verticalCustomLines: Array<{
+        caption: string;
+        pos: number;
+    }>;
     ngOnChanges(changes: any): void;
     update(): void;
     updateDataLabels(): void;
@@ -44,4 +49,10 @@ export declare class SeriesVerticalComponent implements OnChanges {
     onClick(data: any): void;
     trackBy(index: any, bar: any): string;
     trackDataLabelBy(index: any, barLabel: any): string;
+    gridLineTransform(): string;
+    transformForVerticalCustomLine(vLine: {
+        caption: string;
+        pos: number;
+    }): string;
+    verticalCustomLineStartPointTransform(sy: number): string;
 }
