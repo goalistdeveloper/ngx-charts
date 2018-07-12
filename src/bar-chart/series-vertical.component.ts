@@ -69,7 +69,7 @@ export enum D0Types {
               <svg:line
                       class="gridline-path gridline-path-vertical"
                       [ngClass]="vLine.class? vLine.class : null"   
-                      [attr.y1]="dims.height + ((dims.height * 0.2) * 2)"
+                      [attr.y1]="dims.height + ((dims.height * 0.2))"
                       y2="0"/>
           </svg:g>
       </svg:g>
