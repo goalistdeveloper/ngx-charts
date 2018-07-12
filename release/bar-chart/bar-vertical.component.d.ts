@@ -31,6 +31,7 @@ export declare class BarVerticalComponent extends BaseChartComponent {
     verticalCustomLines: Array<{
         caption: string;
         pos: number;
+        class?: string;
     }>;
     activate: EventEmitter<any>;
     deactivate: EventEmitter<any>;

@@ -40,6 +40,7 @@ export declare class SeriesVerticalComponent implements OnChanges {
     verticalCustomLines: Array<{
         caption: string;
         pos: number;
+        class?: string;
     }>;
     ngOnChanges(changes: any): void;
     update(): void;
@@ -53,6 +54,7 @@ export declare class SeriesVerticalComponent implements OnChanges {
     transformForVerticalCustomLine(vLine: {
         caption: string;
         pos: number;
+        class?: string;
     }): string;
     verticalCustomLineStartPointTransform(sy: number): string;
 }
