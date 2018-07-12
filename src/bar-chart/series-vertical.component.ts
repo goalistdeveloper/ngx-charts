@@ -67,7 +67,8 @@ export enum D0Types {
           <svg:g *ngIf="showVerticalCustomLines"
                  [attr.transform]="verticalCustomLineStartPointTransform(-dims.height * 0.2)">
               <svg:line
-                      class="gridline-path gridline-path-vertical bar-v-line"
+                      class="gridline-path gridline-path-vertical"
+                      [ngClass]="vLine.class? vLine.class : null"   
                       [attr.y1]="dims.height + ((dims.height * 0.2) * 2)"
                       y2="0"/>
           </svg:g>
@@ -118,7 +119,7 @@ export class SeriesVerticalComponent implements OnChanges {
                             total: number, series: string}> = [];
 
   @Input() showVerticalCustomLines = false;
-  @Input() verticalCustomLines: Array<{caption: string, pos: number}>  = [];
+  @Input() verticalCustomLines: Array<{caption: string, pos: number, class?: string}>  = [];
 
   ngOnChanges(changes): void {
     this.update();
@@ -295,7 +296,7 @@ export class SeriesVerticalComponent implements OnChanges {
       return `translate(0,${-verticalSpacing - 5})`;
   }
 
-  transformForVerticalCustomLine(vLine: {caption: string, pos: number}) {
+  transformForVerticalCustomLine(vLine: {caption: string, pos: number, class?: string}) {
       let end: number = 0;
       if (this.bars !== undefined && this.bars !== null && this.bars.length > 0) {
           const lastBar = this.bars[this.bars.length - 1];

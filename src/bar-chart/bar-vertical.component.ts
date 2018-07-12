@@ -106,7 +106,7 @@ export class BarVerticalComponent extends BaseChartComponent {
   @Input() dataLabelFormatting: any;
 
   @Input() showVerticalCustomLines = false;
-  @Input() verticalCustomLines: Array<{caption: string, pos: number}> = [];
+  @Input() verticalCustomLines: Array<{caption: string, pos: number, class?: string}> = [];
 
   @Output() activate: EventEmitter<any> = new EventEmitter();
   @Output() deactivate: EventEmitter<any> = new EventEmitter();

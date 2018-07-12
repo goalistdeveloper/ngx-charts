@@ -226,9 +226,9 @@ export class AppComponent implements OnInit {
   ];
 
   showVerticalCustomLines = true;
-  verticalCustomLines: Array<{caption: string, pos: number}> = [
+  verticalCustomLines: Array<{caption: string, pos: number, class?: string}> = [
     {caption: '値その1', pos: 0},
-    {caption: '値その2', pos: 30},
+    {caption: '値その2', pos: 30, class: 'bar-v-line-tomato'},
     {caption: '値その3', pos: 45},
     {caption: '値その4', pos: 45.5},
     {caption: '値その5', pos: 100},
