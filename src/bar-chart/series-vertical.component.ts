@@ -62,13 +62,13 @@ export enum D0Types {
                  (dimensionsChanged)="dataLabelHeightChanged.emit({size:$event, index:i})"
           />
       </svg:g>
-      <svg:g *ngFor="let vLine of verticalCustomLinesDrawList"
+      <svg:g *ngFor="let vLine of verticalCustomLines"
              [attr.transform]="transformForVerticalCustomLine(vLine)">
           <svg:g *ngIf="showVerticalCustomLines"
-                 [attr.transform]="verticalCustomLineStartPointTransform()">
+                 [attr.transform]="verticalCustomLineStartPointTransform(-dims.height * 0.2)">
               <svg:line
                       class="gridline-path gridline-path-vertical bar-v-line"
-                      [attr.y1]="dims.height + 30"
+                      [attr.y1]="dims.height + ((dims.height * 0.2) * 2)"
                       y2="0"/>
           </svg:g>
       </svg:g>
@@ -118,24 +118,10 @@ export class SeriesVerticalComponent implements OnChanges {
                             total: number, series: string}> = [];
 
   @Input() showVerticalCustomLines = false;
-  @Input() verticalCustomLines: {[key: string]: string} = {};
-
-  private verticalCustomLinesDrawList: Array<{ x: any, caption: string, bar: any}> = [];
+  @Input() verticalCustomLines: Array<{caption: string, pos: number}>  = [];
 
   ngOnChanges(changes): void {
     this.update();
-
-    if (this.showVerticalCustomLines) {
-      this.verticalCustomLinesDrawList = [];
-
-      for (const bar of this.bars) {
-        if (this.verticalCustomLines.hasOwnProperty(bar.data.name)) {
-          const caption: string = this.verticalCustomLines[bar.data.name];
-          // this.verticalCustomLinesDrawList.push({x: bar.data.name, caption: caption, bar: bar});
-          this.verticalCustomLinesDrawList.push({x: bar.data.name, caption, bar}); // shorthand
-        }
-      }
-    }
   }
 
   update(): void {
@@ -309,12 +295,17 @@ export class SeriesVerticalComponent implements OnChanges {
       return `translate(0,${-verticalSpacing - 5})`;
   }
 
-  transformForVerticalCustomLine(vLine: { x: any, caption: string, bar: any}) {
-      return 'translate(' + (vLine.bar.x + vLine.bar.width / 2) + ',' + '0)';
+  transformForVerticalCustomLine(vLine: {caption: string, pos: number}) {
+      let end: number = 0;
+      if (this.bars !== undefined && this.bars !== null && this.bars.length > 0) {
+          const lastBar = this.bars[this.bars.length - 1];
+          end = lastBar.x + lastBar.width;
+      }
+      return 'translate(' + (end * vLine.pos / 100) + ',' + '0)';
   }
 
-  verticalCustomLineStartPointTransform(): string {
-      return `translate(0,${20})`;
+  verticalCustomLineStartPointTransform(sy: number): string {
+      return `translate(0,${sy})`;
   }
 
 }

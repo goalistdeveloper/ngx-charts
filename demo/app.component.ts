@@ -226,11 +226,13 @@ export class AppComponent implements OnInit {
   ];
 
   showVerticalCustomLines = true;
-  verticalCustomLines: {[key: string]: string} = {
-      Germany: 'first',
-      France: 'second',
-      Italy: 'third'
-  };
+  verticalCustomLines: Array<{caption: string, pos: number}> = [
+    {caption: '値その1', pos: 0},
+    {caption: '値その2', pos: 30},
+    {caption: '値その3', pos: 45},
+    {caption: '値その4', pos: 45.5},
+    {caption: '値その5', pos: 100},
+  ];
 
   constructor(public location: Location) {
     this.mathFunction = this.getFunction();
